@@ -58,23 +58,6 @@ const photosReducer = (state, action) => {
           el.id === action.payload.id ? { ...el, likes: el.likes + 1 } : el
         ),
       };
-
-    case 'handleNext':
-      return {
-        ...state,
-        currentPhotoIndex: (state.currentPhotoIndex + 1) % state.photos.length,
-        selectedPhoto:
-          state.photos[(state.currentPhotoIndex + 1) % state.photos.length],
-      };
-
-    case 'handleBack':
-      return {
-        ...state,
-        currentPhotoIndex: (state.currentPhotoIndex - 1) % state.photos.length,
-        selectedPhoto:
-          state.photos[(state.currentPhotoIndex - 1) % state.photos.length],
-      };
-
     case 'closeModal':
       return {
         ...state,

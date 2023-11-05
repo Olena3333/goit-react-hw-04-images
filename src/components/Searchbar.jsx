@@ -1,47 +1,41 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import {
   SearchbarWrapper,
   SearchForm,
   StyledButton,
   SearchFormInput,
 } from './ImageGallery.Styled';
-export class Searchbar extends Component {
-  state = {
-    searchValue: '',
-  };
-  handleSubmit = event => {
+import propTypes from 'prop-types';
+export const Searchbar = props => {
+  const [searchValue, setSearchValue] = useState('');
+  const handleSubmit = event => {
     event.preventDefault();
-    if (!this.state.searchValue) {
+    if (!searchValue) {
       return;
     }
-    this.props.setQuery(this.state.searchValue);
-    this.setState({ searchValue: '' });
+    props.setQuery(searchValue);
   };
-  handleOnChange = e => {
-    this.setState({ searchValue: e.target.value });
+  const handleOnChange = e => {
+    setSearchValue(e.target.value);
   };
-
-  render() {
-    return (
-      <SearchbarWrapper>
-        <SearchForm onSubmit={this.handleSubmit} className="form">
-          <SearchFormInput
-            onChange={this.handleOnChange}
-            value={this.state.searchValue}
-            type="search"
-            autoComplete="off"
-            autoFocus
-            placeholder="What are you looking for?"
-          />
-          <StyledButton
-            disabled={!this.state.searchValue}
-            type="submit"
-            className="button"
-          >
-            Search
-          </StyledButton>
-        </SearchForm>
-      </SearchbarWrapper>
-    );
-  }
-}
+  return (
+    <SearchbarWrapper>
+      <SearchForm onSubmit={handleSubmit} className="form">
+        <SearchFormInput
+          onChange={handleOnChange}
+          value={searchValue}
+          type="search"
+          autoComplete="off"
+          autoFocus
+          placeholder="What are you looking for?"
+        />
+        <StyledButton disabled={!searchValue} type="submit" className="button">
+          Search
+        </StyledButton>
+      </SearchForm>
+    </SearchbarWrapper>
+  );
+};
+Searchbar.propTypes = {
+  setQuery: propTypes.func.isRequired,
+};

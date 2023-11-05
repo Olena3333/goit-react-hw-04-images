@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { FcLike } from 'react-icons/fc';
 import {
@@ -11,63 +11,54 @@ import {
   ImageInfo,
 } from './Modal.Styled';
 import propTypes from 'prop-types';
-
-export class Modal extends React.Component {
-  intervalId = null;
-  timeoutId = null;
-  static propTypes = {
-    close: propTypes.func.isRequired,
-    selectedPhoto: propTypes.object.isRequired,
-  };
-  handleKeyDown = e => {
-    if (e.key === 'Escape') {
-      this.props.close();
-      toast.info('Modal closed by Escape');
-    }
-  };
-
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyDown);
+export const Modal = ({ selectedPhoto, close }) => {
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if (e.key === 'Escape') {
+        close();
+        toast.info('Modal closed by Escape');
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
     document.body.style.overflow = 'hidden';
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
-    document.body.style.overflow = 'visible';
-  }
-
-  handleClickOutside = ({ target, currentTarget }) => {
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'visible';
+    };
+  }, [close]);
+  const handleClickOutside = ({ target, currentTarget }) => {
     if (target === currentTarget) {
-      this.props.close();
+      close();
       toast.info('Modal closed by click on backdrop');
     }
   };
 
-  render() {
-    const { selectedPhoto, close } = this.props;
+  return (
+    <StyledWrapper onClick={handleClickOutside}>
+      <CrossButton onClick={close}>✕</CrossButton>
 
-    return (
-      <StyledWrapper onClick={this.handleClickOutside}>
-        <CrossButton onClick={close}>✕</CrossButton>
-
+      <div>
         <div>
-          <div>
-            <ImageContainer>
-              <StyledImage
-                src={selectedPhoto.largeImageURL}
-                alt={selectedPhoto.tags}
-              />
-            </ImageContainer>
-            <ImageInfo>
-              <Title>{selectedPhoto.tags}</Title>
-              <LikeButton>
-                <FcLike />
-                <span>{selectedPhoto.likes}</span>
-              </LikeButton>
-            </ImageInfo>
-          </div>
+          <ImageContainer>
+            <StyledImage
+              src={selectedPhoto.largeImageURL}
+              alt={selectedPhoto.tags}
+            />
+          </ImageContainer>
+          <ImageInfo>
+            <Title>{selectedPhoto.tags}</Title>
+            <LikeButton>
+              <FcLike />
+              <span>{selectedPhoto.likes}</span>
+            </LikeButton>
+          </ImageInfo>
         </div>
-      </StyledWrapper>
-    );
-  }
-}
+      </div>
+    </StyledWrapper>
+  );
+};
+
+Modal.propTypes = {
+  close: propTypes.func.isRequired,
+  selectedPhoto: propTypes.object.isRequired,
+};
